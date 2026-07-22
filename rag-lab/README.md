@@ -25,8 +25,8 @@ Hands-on course for learning Retrieval-Augmented Generation (RAG) and vector sea
 
 ## Lessons
 
-1. **Concepts** — mental model only (you are here) → [`lessons/01_concepts.md`](lessons/01_concepts.md)
-2. Auth & project setup (after you pass Lesson 1 checks)
+1. **Concepts** — done → [`lessons/01_concepts.md`](lessons/01_concepts.md)
+2. **Auth & project setup** — you are here → [`lessons/02_auth_and_project.md`](lessons/02_auth_and_project.md)
 3. Vertex embeddings
 4. BigQuery vectors
 5. Ingest a corpus
