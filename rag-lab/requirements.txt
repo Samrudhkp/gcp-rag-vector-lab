@@ -1,0 +1,2 @@
+# Dependencies are pinned in Lesson 2 / 3 when we start coding against APIs.
+# Intentionally empty for Lesson 1.
