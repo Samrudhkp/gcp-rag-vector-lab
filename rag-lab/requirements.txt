@@ -1,2 +1,2 @@
-# Dependencies are pinned in Lesson 2 / 3 when we start coding against APIs.
-# Intentionally empty for Lesson 1.
+google-cloud-aiplatform>=1.70.0
+python-dotenv>=1.0.0
