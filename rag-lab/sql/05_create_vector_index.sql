@@ -1,0 +1,11 @@
+-- Lesson 8: IVF vector index on doc_chunks.embedding (COSINE)
+-- NOTE: BigQuery IVF indexes currently require >= 5000 rows.
+-- With a small lab corpus, skip this and use VECTOR_SEARCH directly (still valid).
+-- CREATE VECTOR INDEX IF NOT EXISTS doc_chunks_embedding_idx
+-- ON `cursor-rag-lab-sam.rag_lab.doc_chunks`(embedding)
+-- OPTIONS (
+--   index_type = 'IVF',
+--   distance_type = 'COSINE',
+--   ivf_options = '{"num_lists": 1}'
+-- );
+SELECT 'Vector index skipped for small corpora (<5000 rows); VECTOR_SEARCH still works.' AS note;

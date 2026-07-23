@@ -1,27 +1,62 @@
 # RAG Lab — Vertex AI + BigQuery + Gemini
 
-Hands-on course for learning Retrieval-Augmented Generation (RAG) and vector search on Google Cloud project `cursor-rag-lab-sam`.
+Working RAG + vector search on Google Cloud project **`cursor-rag-lab-sam`**.
 
-**Rule:** No Google Cloud commands, API calls, or deployments run without your explicit approval.
+## What this project demonstrates
 
-## Stack
+```text
+Sample docs  →  chunk + Vertex embed  →  BigQuery doc_chunks (vectors)
+                                              │
+User question → same embed model → VECTOR_SEARCH (top-k, cosine)
+                                              │
+                         Gemini answers using only retrieved chunks
+                                              │
+                                   query_log stores each demo run
+```
 
-- Python
-- Vertex AI embeddings
-- BigQuery vector search
-- Gemini
-- Google Cloud
+| Cloud resource | Purpose |
+|----------------|---------|
+| Project `cursor-rag-lab-sam` | All lab resources |
+| API: Vertex AI | Embeddings + Gemini |
+| API: BigQuery | Vector store + search |
+| Dataset `rag_lab` | Lab dataset |
+| Table `doc_chunks` | Chunk text + 768-dim embeddings |
+| Table `query_log` | Logged Q&A for demos |
+| Vector index | Optional at ≥5000 rows; lab uses `VECTOR_SEARCH` directly |
 
 ## Folder map
 
 | Path | Purpose |
 |------|---------|
-| `lessons/` | One markdown file per lesson |
-| `data/sample_docs/` | Tiny text corpus for RAG practice |
-| `sql/` | BigQuery DDL and `VECTOR_SEARCH` queries |
-| `src/` | Python modules (embed → ingest → retrieve → generate) |
-| `notebooks/` | Optional later; we start with scripts |
-| `.env.example` | Config template (no secrets) |
+| `lessons/` | Tutor write-ups |
+| `data/sample_docs/` | IT, HR, security, expense policies |
+| `sql/` | Dataset / table / index DDL |
+| `src/` | Python pipeline |
+| `.env.example` | Config template |
+
+## Quick demo
+
+```bash
+cd rag-lab
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env   # PROJECT_ID=cursor-rag-lab-sam
+python -m src.setup_bq
+python -m src.ingest
+python -m src.demo
+```
+
+Single question:
+
+```bash
+python -m src.rag_pipeline "What should I do if I get a phishing email?"
+```
+
+## Console links
+
+- Project home: https://console.cloud.google.com/home/dashboard?project=cursor-rag-lab-sam
+- BigQuery `doc_chunks`: https://console.cloud.google.com/bigquery?project=cursor-rag-lab-sam
+- Search table name `doc_chunks` or `query_log` in the BigQuery explorer
 
 ## Lessons
 
@@ -32,19 +67,4 @@ Hands-on course for learning Retrieval-Augmented Generation (RAG) and vector sea
 5. Ingest → [`lessons/05_ingest.md`](lessons/05_ingest.md)
 6. Retrieve → [`lessons/06_retrieve.md`](lessons/06_retrieve.md)
 7. Gemini RAG → [`lessons/07_gemini_rag.md`](lessons/07_gemini_rag.md)
-
-## Demo (after setup)
-
-```bash
-cd rag-lab
-source .venv/bin/activate
-pip install -r requirements.txt
-python -m src.ingest
-python -m src.rag_pipeline "How do I reset my password?"
-```
-
-## How we work
-
-1. Read the current lesson.
-2. Answer the check questions (or say if something is unclear).
-3. Approve the next lesson before any cloud work starts.
+8. Go further → [`lessons/08_go_further.md`](lessons/08_go_further.md)

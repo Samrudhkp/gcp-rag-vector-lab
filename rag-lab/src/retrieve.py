@@ -12,7 +12,17 @@ from src.config import get_settings
 from src.embed import embed_texts
 
 
-def retrieve(question: str, *, top_k: int = 3) -> list[dict]:
+def retrieve(
+    question: str,
+    *,
+    top_k: int = 3,
+    max_distance: float | None = 0.7,
+) -> list[dict]:
+    """Return nearest chunks with cosine distance and similarity score.
+
+    similarity ≈ 1 - distance (for cosine distance in BigQuery VECTOR_SEARCH).
+    Rows farther than max_distance are dropped when max_distance is set.
+    """
     settings = get_settings()
     query_vector = embed_texts([question], task_type="RETRIEVAL_QUERY")[0]
     client = bigquery.Client(project=settings.project_id)
@@ -31,6 +41,7 @@ def retrieve(question: str, *, top_k: int = 3) -> list[dict]:
       top_k => @top_k,
       distance_type => 'COSINE'
     )
+    ORDER BY distance
     """
     job_config = bigquery.QueryJobConfig(
         query_parameters=[
@@ -39,24 +50,37 @@ def retrieve(question: str, *, top_k: int = 3) -> list[dict]:
         ]
     )
     rows = client.query(sql, job_config=job_config).result()
-    return [
-        {
-            "id": row["id"],
-            "doc_id": row["doc_id"],
-            "content": row["content"],
-            "distance": float(row["distance"]),
-        }
-        for row in rows
-    ]
+    hits: list[dict] = []
+    for row in rows:
+        distance = float(row["distance"])
+        if max_distance is not None and distance > max_distance:
+            continue
+        hits.append(
+            {
+                "id": row["id"],
+                "doc_id": row["doc_id"],
+                "content": row["content"],
+                "distance": distance,
+                "similarity": round(1.0 - distance, 4),
+            }
+        )
+    return hits
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Vector search over ingested chunks")
     parser.add_argument("question", nargs="?", default="How do I reset my password?")
     parser.add_argument("--top-k", type=int, default=3)
+    parser.add_argument(
+        "--max-distance",
+        type=float,
+        default=0.7,
+        help="Drop hits with cosine distance above this (use 1.0 to keep all)",
+    )
     args = parser.parse_args(argv)
 
-    hits = retrieve(args.question, top_k=args.top_k)
+    max_distance = None if args.max_distance >= 1.0 else args.max_distance
+    hits = retrieve(args.question, top_k=args.top_k, max_distance=max_distance)
     print(json.dumps({"question": args.question, "hits": hits}, indent=2))
     return 0
 

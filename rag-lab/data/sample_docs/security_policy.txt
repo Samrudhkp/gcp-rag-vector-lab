@@ -1,0 +1,16 @@
+# Acme Corp Security Policy (excerpt)
+
+## Phishing
+Never click unexpected links in email. Hover to inspect the real URL first.
+Report suspected phishing to security@acme.example or use the "Report Phish" button in Outlook.
+IT will never ask for your password over email or Slack.
+
+## MFA
+All employees must enable multi-factor authentication in Okta.
+Preferred methods: hardware security key, then authenticator app.
+SMS MFA is allowed only as a temporary backup.
+
+## Data classification
+Public, Internal, Confidential, and Restricted.
+Confidential data (customer PII, payroll) must not be stored in personal drives.
+Restricted data requires encryption at rest and an approved access ticket.

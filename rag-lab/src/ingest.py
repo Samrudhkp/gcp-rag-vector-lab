@@ -1,4 +1,4 @@
-"""Ingest sample docs: chunk → embed → insert into BigQuery."""
+"""Ingest sample docs: chunk → embed → load into BigQuery (WRITE_TRUNCATE)."""
 
 from __future__ import annotations
 
@@ -57,9 +57,6 @@ def ingest(*, replace: bool = True) -> int:
     client = bigquery.Client(project=settings.project_id)
     table_id = f"{settings.project_id}.{settings.bq_dataset}.{settings.bq_table}"
 
-    if replace:
-        client.query(f"DELETE FROM `{table_id}` WHERE TRUE").result()
-
     rows: list[dict] = []
     for doc_id, text in load_documents():
         for content in chunk_text(text):
@@ -80,12 +77,24 @@ def ingest(*, replace: bool = True) -> int:
     for row, vector in zip(rows, vectors, strict=True):
         row["embedding"] = vector
 
-    errors = client.insert_rows_json(table_id, rows)
-    if errors:
-        print("Insert errors:", errors)
-        return 1
+    # Load job avoids streaming-buffer limits that block DELETE right after insert_rows_json.
+    job_config = bigquery.LoadJobConfig(
+        schema=[
+            bigquery.SchemaField("id", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("doc_id", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("content", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("embedding", "FLOAT64", mode="REPEATED"),
+        ],
+        write_disposition=(
+            bigquery.WriteDisposition.WRITE_TRUNCATE
+            if replace
+            else bigquery.WriteDisposition.WRITE_APPEND
+        ),
+    )
+    load_job = client.load_table_from_json(rows, table_id, job_config=job_config)
+    load_job.result()
 
-    print(f"Inserted {len(rows)} rows into {table_id}")
+    print(f"Loaded {len(rows)} rows into {table_id}")
     for row in rows:
         print(f"  - {row['id']} ({row['doc_id']}, {len(row['content'])} chars)")
     return 0

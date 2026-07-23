@@ -1,0 +1,15 @@
+# Acme Corp Expense Policy (excerpt)
+
+## Expense reimbursement
+Submit expenses in Expensify within 30 days of the purchase date.
+Meals while traveling are capped at $75 per day without manager pre-approval.
+Alcohol is not reimbursable except for approved customer entertainment.
+
+## Travel
+Book flights and hotels through the corporate travel portal.
+Economy class is the default for flights under 6 hours.
+Rental cars require manager approval for trips inside the same metro area.
+
+## Software subscriptions
+Software under $50/month can be expensed with manager Slack approval.
+Software over $50/month requires a purchase order via Finance.

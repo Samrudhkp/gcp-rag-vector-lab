@@ -1,7 +1,7 @@
-# RAG Lab
+# gcp-rag-vector-lab
 
-Learn RAG and vector databases with Python, Vertex AI embeddings, BigQuery vector search, and Gemini.
+RAG + vector search on Google Cloud (`cursor-rag-lab-sam`).
 
-Course materials live in [`rag-lab/`](rag-lab/). Start at [`rag-lab/lessons/01_concepts.md`](rag-lab/lessons/01_concepts.md).
+All course code and docs: [`rag-lab/`](rag-lab/)
 
-No Google Cloud commands run without your approval.
+Start here for a demo walkthrough: [`rag-lab/SHOWCASE.md`](rag-lab/SHOWCASE.md)
