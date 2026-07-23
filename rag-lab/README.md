@@ -1,6 +1,6 @@
 # RAG Lab — Vertex AI + BigQuery + Gemini
 
-Hands-on course for learning Retrieval-Augmented Generation (RAG) and vector search on Google Cloud project `cursor-gcp-practice`.
+Hands-on course for learning Retrieval-Augmented Generation (RAG) and vector search on Google Cloud project `cursor-rag-lab-sam`.
 
 **Rule:** No Google Cloud commands, API calls, or deployments run without your explicit approval.
 

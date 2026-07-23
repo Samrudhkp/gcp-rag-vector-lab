@@ -1,6 +1,6 @@
 # Lesson 2 — Auth & project setup
 
-**Goal:** Know how this machine (or your laptop) will talk to Google Cloud project `cursor-gcp-practice`, and which APIs we will enable — **without running anything until you approve**.
+**Goal:** Know how this machine (or your laptop) will talk to Google Cloud project `cursor-rag-lab-sam`, and which APIs we will enable — **without running anything until you approve**.
 
 **Still no cloud work until you say yes to specific commands below.**
 
@@ -29,7 +29,7 @@ For this course we prefer **Application Default Credentials (ADC)** via `gcloud`
 
 | Setting | Value |
 |---------|--------|
-| Project ID | `cursor-gcp-practice` |
+| Project ID | `cursor-rag-lab-sam` |
 | Suggested region | `us-central1` (change only if you prefer another) |
 | Config template | [`.env.example`](../.env.example) |
 
@@ -55,11 +55,11 @@ These are listed so you can copy them when ready. **Reply which ones you approve
 ### A) Point gcloud at the project
 
 ```bash
-gcloud config set project cursor-gcp-practice
+gcloud config set project cursor-rag-lab-sam
 gcloud config get-value project
 ```
 
-Expected: prints `cursor-gcp-practice`.
+Expected: prints `cursor-rag-lab-sam`.
 
 ### B) Application Default Credentials (for Python)
 
@@ -72,13 +72,13 @@ Opens a browser; grants local apps permission to call GCP as you.
 ### C) Enable APIs
 
 ```bash
-gcloud services enable aiplatform.googleapis.com bigquery.googleapis.com --project=cursor-gcp-practice
+gcloud services enable aiplatform.googleapis.com bigquery.googleapis.com --project=cursor-rag-lab-sam
 ```
 
 ### D) Sanity checks (read-only-ish)
 
 ```bash
-gcloud services list --enabled --project=cursor-gcp-practice \
+gcloud services list --enabled --project=cursor-rag-lab-sam \
   --filter="config.name:(aiplatform.googleapis.com OR bigquery.googleapis.com)"
 ```
 
