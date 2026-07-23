@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>RAG + Vector Database Lab Report — cursor-rag-lab-sam</title>
+<style>
+  @page { size: Letter; margin: 0.75in; }
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #1a1a1a;
+    line-height: 1.45;
+    font-size: 11pt;
+  }
+  h1 { font-size: 20pt; margin: 0 0 6px; color: #0b3d2e; }
+  h2 { font-size: 14pt; margin: 22px 0 8px; color: #0b3d2e; border-bottom: 2px solid #0b3d2e; padding-bottom: 4px; }
+  h3 { font-size: 12pt; margin: 14px 0 6px; color: #1f5c4a; }
+  .meta { color: #444; margin-bottom: 18px; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0 14px; font-size: 10pt; }
+  th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #e8f2ee; }
+  code, pre { font-family: "SFMono-Regular", Consolas, Menlo, monospace; font-size: 9.5pt; }
+  pre {
+    background: #f4f6f5;
+    border: 1px solid #ddd;
+    padding: 10px 12px;
+    white-space: pre-wrap;
+    page-break-inside: avoid;
+  }
+  .box {
+    border: 1px solid #b7d0c6;
+    background: #f3faf7;
+    padding: 10px 12px;
+    margin: 10px 0 14px;
+    page-break-inside: avoid;
+  }
+  ul { margin: 6px 0 12px 18px; }
+  li { margin: 3px 0; }
+  .footer { margin-top: 28px; font-size: 9pt; color: #666; }
+  .ok { color: #0b3d2e; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<h1>RAG + Vector Database Lab Report</h1>
+<p class="meta">
+  <strong>Project:</strong> cursor-rag-lab-sam (Cursor RAG Lab Sam)<br/>
+  <strong>Organization:</strong> sammycloud975-org<br/>
+  <strong>Account:</strong> sammycloud975@gmail.com<br/>
+  <strong>Stack:</strong> Python · Vertex AI embeddings · BigQuery vector search · Gemini<br/>
+  <strong>Repo path:</strong> rag-lab/
+</p>
+
+<div class="box">
+  <strong>Goal completed:</strong> Implement Retrieval-Augmented Generation (RAG) using a vector database on Google Cloud,
+  with a runnable demo that retrieves company-policy chunks from BigQuery and answers with Gemini.
+</div>
+
+<h2>1. Architecture</h2>
+<pre>Sample docs → chunk → Vertex text-embedding-005 (768-dim)
+                              ↓
+                 BigQuery rag_lab.doc_chunks  ←── vector store
+                              ↑
+User question → same embedding model → VECTOR_SEARCH (cosine, top-k)
+                              ↓
+                 Gemini 2.5 Flash answers from retrieved context only
+                              ↓
+                 BigQuery rag_lab.query_log stores each Q&amp;A run</pre>
+
+<h2>2. What was created in Google Cloud</h2>
+<table>
+  <tr><th>Resource</th><th>Details</th><th>Status</th></tr>
+  <tr><td>GCP project</td><td>ID <code>cursor-rag-lab-sam</code>, number 84704792466, under org 1058021731899</td><td class="ok">Created</td></tr>
+  <tr><td>Billing</td><td>Linked to billing account 01F59D-CE68A5-998B16</td><td class="ok">Enabled</td></tr>
+  <tr><td>API: Vertex AI</td><td><code>aiplatform.googleapis.com</code></td><td class="ok">Enabled</td></tr>
+  <tr><td>API: BigQuery</td><td><code>bigquery.googleapis.com</code></td><td class="ok">Enabled</td></tr>
+  <tr><td>Dataset</td><td><code>rag_lab</code> (location US)</td><td class="ok">Created</td></tr>
+  <tr><td>Table <code>doc_chunks</code></td><td>Vector store: id, doc_id, content, embedding[], created_at</td><td class="ok">8 rows</td></tr>
+  <tr><td>Table <code>query_log</code></td><td>Demo audit log: question, answer, retrieved_ids, distances, models</td><td class="ok">Created</td></tr>
+  <tr><td>Embeddings model</td><td>Vertex <code>text-embedding-005</code> (768 floats per chunk)</td><td class="ok">Used</td></tr>
+  <tr><td>Generation model</td><td>Vertex <code>gemini-2.5-flash</code></td><td class="ok">Used</td></tr>
+</table>
+
+<p><strong>Note:</strong> A BigQuery IVF vector index was attempted but requires ≥5000 rows. This lab correctly uses
+<code>VECTOR_SEARCH</code> directly on the small corpus (still a valid vector-database workflow).</p>
+
+<h2>3. Document corpus ingested</h2>
+<table>
+  <tr><th>Source file</th><th>Topics</th></tr>
+  <tr><td><code>data/sample_docs/it_faq.txt</code></td><td>Password reset, VPN, laptop setup</td></tr>
+  <tr><td><code>data/sample_docs/hr_handbook.txt</code></td><td>Vacation, parental leave, remote work</td></tr>
+  <tr><td><code>data/sample_docs/security_policy.txt</code></td><td>Phishing, MFA, data classification</td></tr>
+  <tr><td><code>data/sample_docs/expense_policy.txt</code></td><td>Expenses, travel, software subscriptions</td></tr>
+</table>
+<p>Documents are chunked (~500 characters), embedded, and loaded into <code>doc_chunks</code> (8 chunks total).</p>
+
+<h2>4. Code delivered in the repo</h2>
+<table>
+  <tr><th>Module</th><th>Role</th></tr>
+  <tr><td><code>src/config.py</code></td><td>Loads project settings from <code>.env</code></td></tr>
+  <tr><td><code>src/embed.py</code></td><td>Vertex embedding helper / CLI</td></tr>
+  <tr><td><code>src/setup_bq.py</code></td><td>Creates dataset + tables</td></tr>
+  <tr><td><code>src/ingest.py</code></td><td>Chunk → embed → BigQuery load</td></tr>
+  <tr><td><code>src/retrieve.py</code></td><td>BigQuery <code>VECTOR_SEARCH</code> with similarity filter</td></tr>
+  <tr><td><code>src/generate.py</code></td><td>Gemini answer from retrieved context</td></tr>
+  <tr><td><code>src/log_query.py</code></td><td>Writes runs to <code>query_log</code></td></tr>
+  <tr><td><code>src/rag_pipeline.py</code></td><td>Single-question end-to-end RAG</td></tr>
+  <tr><td><code>src/demo.py</code></td><td>Multi-question showcase demo</td></tr>
+  <tr><td><code>lessons/</code> + <code>SHOWCASE.md</code></td><td>Tutor notes and presentation guide</td></tr>
+</table>
+
+<h2>5. Example demo results (already run in cloud)</h2>
+<table>
+  <tr><th>Question</th><th>Top source</th><th>Answer summary</th></tr>
+  <tr><td>How do I reset my password?</td><td>it_faq</td><td>Okta reset URL; 30-min link; Slack #it-help if locked out</td></tr>
+  <tr><td>How many vacation days…?</td><td>hr_handbook</td><td>20 paid days per year</td></tr>
+  <tr><td>What if I get a phishing email?</td><td>security_policy</td><td>Don’t click; report to security@ / Report Phish</td></tr>
+  <tr><td>Daily meal limit while traveling?</td><td>expense_policy</td><td>$75/day without pre-approval</td></tr>
+  <tr><td>Remote three days a week?</td><td>hr_handbook</td><td>Yes, up to 3 days with manager approval</td></tr>
+</table>
+
+<h2>6. How to see the vector database in Cloud Console</h2>
+<ol>
+  <li>Open project: <code>https://console.cloud.google.com/home/dashboard?project=cursor-rag-lab-sam</code></li>
+  <li>Open BigQuery: <code>https://console.cloud.google.com/bigquery?project=cursor-rag-lab-sam</code></li>
+  <li>Left explorer → <strong>cursor-rag-lab-sam</strong> → <strong>rag_lab</strong> → <strong>doc_chunks</strong></li>
+  <li>Click <strong>Preview</strong> to see chunk text and the <code>embedding</code> array (768 numbers) — this is the vector DB</li>
+  <li>Open <strong>query_log</strong> → <strong>Preview</strong> to see logged RAG Q&amp;A runs</li>
+</ol>
+<pre>-- Optional SQL in BigQuery editor:
+SELECT id, doc_id, LENGTH(content) AS chars, ARRAY_LENGTH(embedding) AS dims
+FROM `cursor-rag-lab-sam.rag_lab.doc_chunks`
+ORDER BY doc_id, id;</pre>
+
+<h2>7. How to test RAG (commands)</h2>
+<pre>cd rag-lab
+python3 -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env               # ensure PROJECT_ID=cursor-rag-lab-sam
+
+# (Re)build tables if needed, then ingest + demo
+python -m src.setup_bq
+python -m src.ingest
+python -m src.demo
+
+# Or ask one question:
+python -m src.rag_pipeline "How do I reset my password?"
+python -m src.retrieve "What should I do if I get a phishing email?"</pre>
+
+<div class="box">
+  <strong>What “working” looks like:</strong> the CLI prints retrieved chunk sources with similarity scores,
+  then a Gemini answer that cites those chunks (e.g. <code>[1]</code>). A new row appears in <code>query_log</code>.
+</div>
+
+<h2>8. Console quick links</h2>
+<ul>
+  <li>Project home: https://console.cloud.google.com/home/dashboard?project=cursor-rag-lab-sam</li>
+  <li>BigQuery: https://console.cloud.google.com/bigquery?project=cursor-rag-lab-sam</li>
+  <li>Enabled APIs: https://console.cloud.google.com/apis/dashboard?project=cursor-rag-lab-sam</li>
+</ul>
+
+<p class="footer">
+  Generated for the gcp-rag-vector-lab coursework materials. No Cloud Run / public web app was deployed;
+  the deliverable is the BigQuery vector store plus the Python RAG pipeline and demo.
+</p>
+
+</body>
+</html>
