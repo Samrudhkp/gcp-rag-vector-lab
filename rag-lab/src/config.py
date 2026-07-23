@@ -33,5 +33,5 @@ def get_settings() -> Settings:
         bq_dataset=os.getenv("BQ_DATASET", "rag_lab").strip(),
         bq_table=os.getenv("BQ_TABLE", "doc_chunks").strip(),
         embedding_model=os.getenv("EMBEDDING_MODEL", "text-embedding-005").strip(),
-        gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.0-flash").strip(),
+        gemini_model=os.getenv("GEMINI_MODEL", "gemini-2.5-flash").strip(),
     )

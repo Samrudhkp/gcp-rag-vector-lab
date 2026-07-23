@@ -25,13 +25,23 @@ Hands-on course for learning Retrieval-Augmented Generation (RAG) and vector sea
 
 ## Lessons
 
-1. **Concepts** — done → [`lessons/01_concepts.md`](lessons/01_concepts.md)
-2. **Auth & project setup** — done → [`lessons/02_auth_and_project.md`](lessons/02_auth_and_project.md)
-3. **Vertex embeddings** — done → [`lessons/03_embeddings.md`](lessons/03_embeddings.md)
-4. **BigQuery vectors** — you are here → [`lessons/04_bigquery_vectors.md`](lessons/04_bigquery_vectors.md)
-5. Ingest a corpus
-6. Retrieve with `VECTOR_SEARCH`
-7. Answer with Gemini
+1. Concepts → [`lessons/01_concepts.md`](lessons/01_concepts.md)
+2. Auth & project → [`lessons/02_auth_and_project.md`](lessons/02_auth_and_project.md)
+3. Vertex embeddings → [`lessons/03_embeddings.md`](lessons/03_embeddings.md)
+4. BigQuery vectors → [`lessons/04_bigquery_vectors.md`](lessons/04_bigquery_vectors.md)
+5. Ingest → [`lessons/05_ingest.md`](lessons/05_ingest.md)
+6. Retrieve → [`lessons/06_retrieve.md`](lessons/06_retrieve.md)
+7. Gemini RAG → [`lessons/07_gemini_rag.md`](lessons/07_gemini_rag.md)
+
+## Demo (after setup)
+
+```bash
+cd rag-lab
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m src.ingest
+python -m src.rag_pipeline "How do I reset my password?"
+```
 
 ## How we work
 

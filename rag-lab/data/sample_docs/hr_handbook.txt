@@ -1,0 +1,14 @@
+# Acme Corp HR Handbook (excerpt)
+
+## Vacation policy
+Full-time employees receive 20 days of paid vacation per year.
+Vacation must be requested at least 5 business days in advance in Workday.
+Unused vacation does not roll over except up to 5 days with manager approval.
+
+## Parental leave
+Birthing parents receive 16 weeks of paid leave. Non-birthing parents receive 8 weeks.
+Notify HR at least 30 days before the expected leave start date when possible.
+
+## Remote work
+Employees may work remotely up to 3 days per week with manager approval.
+Core collaboration hours are 10:00–15:00 in the employee's local timezone.

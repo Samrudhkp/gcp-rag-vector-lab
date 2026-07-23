@@ -1,0 +1,15 @@
+# Acme Corp IT FAQ
+
+## Password reset
+Employees can reset their password at https://okta.acme.example/reset.
+Use your work email. A reset link expires after 30 minutes.
+If you are locked out after 5 failed attempts, contact IT Support on Slack #it-help.
+
+## VPN access
+Install the company VPN client from the Software Center.
+Connect to vpn.acme.example using your Okta credentials and MFA.
+Remote contractors must use the contractor VPN profile named "acme-ext".
+
+## Laptop setup
+New hires receive a laptop on day one. Sign in with Okta, then open the
+"New Hire Checklist" in Notion. Encrypt the disk with FileVault (Mac) or BitLocker (Windows).
