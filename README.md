@@ -1,4 +1,12 @@
-# gcp-rag-vector-lab
+# Cloud labs
+
+## Azure security logs
+
+Blob Storage → Event Grid → Python Azure Function (failed-login reports).
+
+See [`azure-security-logs/`](azure-security-logs/) — start with [`azure-security-logs/README.md`](azure-security-logs/README.md).
+
+## GCP RAG vector lab
 
 RAG + vector search on Google Cloud (`cursor-rag-lab-sam`).
 

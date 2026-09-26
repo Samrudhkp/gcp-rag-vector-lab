@@ -1,0 +1,26 @@
+# Local / secrets — never commit credentials
+local.settings.json
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Azure Functions Core Tools / deploy artifacts
+.python_packages/
+.azure/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Local report output from scripts/run_local.py
+out/

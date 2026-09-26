@@ -1,0 +1,12 @@
+{
+  "source": "fictional-auth-gateway",
+  "generated_at": "2026-09-26T11:00:00Z",
+  "events": [
+    {"timestamp": "2026-09-26T10:50:01Z", "username": "dave", "result": "failure", "ip": "203.0.113.50"},
+    {"timestamp": "2026-09-26T10:50:10Z", "username": "dave", "result": "failure", "ip": "203.0.113.50"},
+    {"timestamp": "2026-09-26T10:50:18Z", "username": "dave", "result": "success", "ip": "203.0.113.50"},
+    {"timestamp": "2026-09-26T10:51:00Z", "username": "erin", "result": "success", "ip": "198.51.100.8"},
+    {"timestamp": "2026-09-26T10:51:30Z", "username": "erin", "result": "success", "ip": "198.51.100.8"},
+    {"timestamp": "2026-09-26T10:52:00Z", "username": "frank", "result": "failure", "ip": "192.0.2.90"}
+  ]
+}
