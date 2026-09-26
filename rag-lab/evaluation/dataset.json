@@ -1,0 +1,91 @@
+[
+  {
+    "id": "good_password_reset",
+    "case_type": "good",
+    "mode": "live",
+    "user_input": "How do I reset my password?",
+    "reference": "Reset your password at https://okta.acme.example/reset using your work email. The reset link expires after 30 minutes. If locked out after 5 failed attempts, contact IT Support on Slack #it-help.",
+    "expected_doc_ids": ["it_faq"]
+  },
+  {
+    "id": "good_vacation_days",
+    "case_type": "good",
+    "mode": "live",
+    "user_input": "How many vacation days do full-time employees get?",
+    "reference": "Full-time employees receive 20 days of paid vacation per year.",
+    "expected_doc_ids": ["hr_handbook"]
+  },
+  {
+    "id": "good_phishing",
+    "case_type": "good",
+    "mode": "live",
+    "user_input": "What should I do if I get a phishing email?",
+    "reference": "Do not click unexpected links. Hover to inspect the URL. Report suspected phishing to security@acme.example or use the Report Phish button in Outlook. IT will never ask for your password over email or Slack.",
+    "expected_doc_ids": ["security_policy"]
+  },
+  {
+    "id": "good_meal_limit",
+    "case_type": "good",
+    "mode": "live",
+    "user_input": "What is the daily meal limit while traveling?",
+    "reference": "Meals while traveling are capped at $75 per day without manager pre-approval.",
+    "expected_doc_ids": ["expense_policy"]
+  },
+  {
+    "id": "good_remote_work",
+    "case_type": "good",
+    "mode": "live",
+    "user_input": "Can I work remotely three days a week?",
+    "reference": "Employees may work remotely up to 3 days per week with manager approval.",
+    "expected_doc_ids": ["hr_handbook"]
+  },
+  {
+    "id": "good_mfa",
+    "case_type": "good",
+    "mode": "live",
+    "user_input": "What MFA methods does Acme prefer?",
+    "reference": "All employees must enable MFA in Okta. Preferred methods are a hardware security key, then an authenticator app. SMS MFA is only allowed as a temporary backup.",
+    "expected_doc_ids": ["security_policy"]
+  },
+  {
+    "id": "bad_retrieval_wrong_contexts",
+    "case_type": "bad_retrieval",
+    "mode": "inject_contexts",
+    "user_input": "How do I reset my password?",
+    "reference": "Reset your password at https://okta.acme.example/reset using your work email. The reset link expires after 30 minutes.",
+    "injected_contexts": [
+      "## Vacation policy\nFull-time employees receive 20 days of paid vacation per year.\nVacation must be requested at least 5 business days in advance in Workday.",
+      "## Software subscriptions\nSoftware under $50/month can be expensed with manager Slack approval."
+    ],
+    "notes": "Intentionally retrieves HR/expense text for an IT password question."
+  },
+  {
+    "id": "bad_answer_hallucination",
+    "case_type": "bad_answer",
+    "mode": "inject_answer",
+    "user_input": "How many vacation days do full-time employees get?",
+    "reference": "Full-time employees receive 20 days of paid vacation per year.",
+    "mode_retrieve": "live",
+    "injected_response": "Full-time employees receive 45 days of unlimited PTO and can cash out unused days for a bonus each December.",
+    "notes": "Good retrieval expected, but answer invents facts not in context (faithfulness should drop)."
+  },
+  {
+    "id": "bad_out_of_corpus",
+    "case_type": "bad_retrieval",
+    "mode": "live",
+    "user_input": "What was Acme Corp's stock price yesterday?",
+    "reference": "I do not know. Stock price information is not in the internal policy documents.",
+    "expected_doc_ids": [],
+    "notes": "Question not covered by the corpus; retrieval should be weak or answer should abstain."
+  },
+  {
+    "id": "bad_answer_off_topic",
+    "case_type": "bad_answer",
+    "mode": "inject_answer",
+    "user_input": "What is the daily meal limit while traveling?",
+    "reference": "Meals while traveling are capped at $75 per day without manager pre-approval.",
+    "mode_retrieve": "live",
+    "injected_response": "You should install the company VPN client from the Software Center and connect to vpn.acme.example.",
+    "notes": "On-corpus retrieval possible, but answer is about VPN instead of meals (answer relevancy should drop)."
+  }
+]

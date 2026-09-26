@@ -52,6 +52,17 @@ Single question:
 python -m src.rag_pipeline "What should I do if I get a phishing email?"
 ```
 
+## RAGAS evaluation
+
+Isolated under [`evaluation/`](evaluation/). Does not modify the main RAG modules.
+
+```bash
+cd rag-lab
+source .venv/bin/activate
+python -m evaluation.run_eval
+```
+
+See [`evaluation/README.md`](evaluation/README.md) and [`evaluation/metrics_guide.md`](evaluation/metrics_guide.md).
 ## Console links
 
 - Project home: https://console.cloud.google.com/home/dashboard?project=cursor-rag-lab-sam
