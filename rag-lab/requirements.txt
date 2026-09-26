@@ -1,3 +1,8 @@
 google-cloud-aiplatform>=1.70.0
 google-cloud-bigquery>=3.25.0
 python-dotenv>=1.0.0
+ragas>=0.4.3,<0.5
+langchain-google-vertexai>=2.0.0
+langchain-core>=0.3.0
+langchain-community>=0.3.0
+pandas>=2.0.0
