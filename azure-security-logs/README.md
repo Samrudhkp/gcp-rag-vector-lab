@@ -10,6 +10,44 @@ No AI models, databases, Container Apps, Container Registry, or Service Bus.
 
 ---
 
+## Live deployment (eastus)
+
+| Item | Value |
+|------|--------|
+| Subscription | `Azure subscription` (`7146a0eb-4440-48e9-8d8b-55b54b45f380`) |
+| Resource group | `rg-sec-logs-lab` |
+| Storage account | `stseclogsafbcfb` (Standard_LRS) |
+| Containers | `logs`, `reports` |
+| Function App | `func-sec-logs-acfddf` (Consumption / Dynamic, Python 3.11, **no App Insights**) |
+| Event Grid | subscription `logs-to-analyze` → `AnalyzeLoginLog` |
+
+**Smoke test passed:** uploaded `login-log-alice-flagged.json` → report in `reports/` with `alice` flagged (5 failures).
+
+### Keep cost ≈ $0
+
+Uses free grants (Functions / Event Grid) plus a tiny Standard_LRS account. Idle storage can still accrue **pennies/month**. When finished:
+
+```bash
+az group delete --name rg-sec-logs-lab --yes --no-wait
+```
+
+That removes the function, plan, storage, and Event Grid topic in one shot.
+
+### Re-test yourself
+
+```bash
+STORAGE=stseclogsafbcfb
+az storage blob upload \
+  --account-name "$STORAGE" --auth-mode login \
+  --container-name logs \
+  --name login-log-multi-flagged.json \
+  --file samples/login-log-multi-flagged.json --overwrite
+
+# then download reports/login-log-multi-flagged-report.json
+```
+
+---
+
 ## What each file is
 
 | Path | Purpose |
